@@ -1,0 +1,83 @@
+<html>
+    <head>
+            <link rel="stylesheet" type="text/css" href="bank.css" />
+    </head>
+<body>
+<div class="immage">
+<div class="container">
+    <div id="top-div">
+            <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn" value="CHOOSE YOUR CITY">CHOOSE YOUR CITY</button>
+                    <div class="dropdown-content" id="dropdown-content">
+                    <a href="null" class="first-option"> Know all banks in your city !!</a>
+                    <a href="BANGALORE">BANGALORE</a>
+                    <a href="DELHI">DELHI</a>
+                    <a href="CHENNAI">CHENNAI</a>
+                    <a href="KOLKATA">KOLKATA</a>
+                    <a href="MUMBAI">MUMBAI</a>
+                    </div>
+                  </div>
+    <input id="searchText" type="text" placeholder="Search...">
+</div>
+    <div id="display">
+    <table id="table-heading"> 
+            <tr id="main-row"> 
+                <th>IFSC</th> 
+                <th>Bank ID</th> 
+                <th>Branch</th> 
+                <th>Address</th> 
+                <th>City</th>
+                <th>District</th>
+                <th>State</th>
+                <th>Bank Name</th>
+            </tr> 
+        </table> 
+    </div>
+</div>
+</div>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script>
+    $('#table-heading').hide();
+   
+    
+$(document).ready(function(){
+    $("#dropdown-content a").click(function() {
+        var city = $(this).attr('href')
+        event.preventDefault()
+        $("#dropbtn").html(city);
+        $('#dropdown-content').hide();
+
+        $.ajax({
+                url: "https://vast-shore-74260.herokuapp.com/banks?city=" + city,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res, function(key, val) {
+                        var tr=$('<tr></tr>');
+                        $.each(val, function(k, v){
+                            $('<td>'+v+'</td>').appendTo(tr);
+                        });
+                        tr.appendTo('#display');
+                    });
+                }
+            });
+            });
+    if ($("#dropdown-content a").attr('href') != null){
+        $('#table-heading').show();
+    }
+
+    $("#dropbtn").click(function(){
+        $('#dropdown-content').show();
+    });
+
+     $("#searchText").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#display tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            $('#main-row').attr('style','display:block !important');
+    });
+  });
+});
+</script>
+</html>
